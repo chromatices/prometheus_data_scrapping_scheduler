@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scrapping-scheduler
+  namespace: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scrapping-scheduler
+  template:
+    metadata:
+      labels:
+        app: scrapping-scheduler
+    spec:
+      containers:
+      - name: scrapping-scheduler
+        image: chromatices/scrapping_scheduler:1.0
+        args:
+          - "python"
+          - "scheduler.py"
+          - "--prometheus_url=http://[prometheus_url]:[service_port]"
+          - "--db_url=[db_url]"
+          - "--db_port=[db_port]"
+          - "--db_user=root"
+          - "--db_passwd=test123"
+          - "--db_name=[target_db_name]"
+          - "--start_time=15d"
+          - "--scrap_size=1m"
+          - "--chunk_size=1t"
+          - "--method=mean"
+          - "--schedule_unit=day"
+      nodeSelector: 
+        kubernetes.io/hostname: multinode-m02
+
