@@ -4,11 +4,11 @@ import schedule
 from sqlalchemy import create_engine
 from prometheus_scrapper import scrapping, preprocessing, pod_separate
 parser = argparse.ArgumentParser(description='Process to set parameters.')
-parser.add_argument('--prometheus_url', type=str, default='http://10.0.1.102:30090/')
-parser.add_argument('--db_url', type=str, default='10.0.1.102')
-parser.add_argument('--db_port',type=int, default='30091')
+parser.add_argument('--prometheus_url', type=str, default='http://prometheus_url:30090/')
+parser.add_argument('--db_url', type=str, default='prometheus_url')
+parser.add_argument('--db_port',type=int, default='30001')
 parser.add_argument('--db_user', type=str, default='root')
-parser.add_argument('--db_passwd', type=str, default='ketilinux')
+parser.add_argument('--db_passwd', type=str, default='test123')
 parser.add_argument('--db_name', type=str, default='Prometheus')
 parser.add_argument('--start_time', type=str,default="2h")
 parser.add_argument('--end_time', type=str,default='now')
