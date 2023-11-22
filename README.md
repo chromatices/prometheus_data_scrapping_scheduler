@@ -5,9 +5,9 @@ This repository is a module for prometheus data scrapping scheduler on k8s envir
 
 **promehteus_scrapper.py**: Integration that before [prometheus_data_refining_module](https://github.com/chromatices/k8s-prometheus-data-refining-module) three modules [prometheus_scrapper.py, prometheus_preprocessing.py, pod_scparate.py]. Add function of removing hash from replication pod's name with [nostril](https://github.com/casics/nostril.git) nonsence detector. 
 
-**scheduler.py**: . 
+**scheduler.py**: Core scheduler of prometheus metric data scrapping module. You can set scheduler unit, scrapping unit, preprocessing unit. 
 
-**deployment.yaml**: 
+**deployment.yaml**: Sample of scheduler on k8s. 
 ------------
 ### Requirements
 ```
