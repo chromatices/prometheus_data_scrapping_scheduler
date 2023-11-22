@@ -5,10 +5,13 @@ This repository is a module for prometheus data scrapping scheduler on k8s envir
 
 **promehteus_scrapper.py**: Integration that before [prometheus_data_refining_module](https://github.com/chromatices/k8s-prometheus-data-refining-module) three modules [prometheus_scrapper.py, prometheus_preprocessing.py, pod_scparate.py]. Add function of removing hash from replication pod's name with [nostril](https://github.com/casics/nostril.git) nonsence detector. 
 
-**scheduler.py**: Core scheduler of prometheus metric data scrapping module. You can set scheduler unit, scrapping unit, preprocessing unit. 
+**scheduler.py**: Core scheduler of prometheus metric data scrapping module. You can set scheduler unit, scrapping unit, preprocessing unit.     
 
-**deployment.yaml**: Sample of scheduler on k8s. 
+**deployment.yaml**: Sample of scheduler on k8s.     
+
+
 ------------
+
 ### Requirements
 ```
 tqdm == 4.64.0
@@ -21,16 +24,6 @@ sqlalchemy == 1.4.29
 nostril package from [nostril](https://github.com/casics/nostril.git)
 ```
 
------------------
-
-### How to use
-```
-python3 prometheus_scrapper.py --url http://127.0.0.1:9090 --start_time 10d --end_time now --chunk_size [1s, 1t, 1h, 1d, 1m, 1y] --storage path [save dir]
-
-python3 prometheus_preprocessing.py --storage_path [save_dir] --chunk_size [1s, 1t, 1h, 1d, 1m, 1y] --method [sum,mean,median]
-
-python3 pod_separate.py --filename [prometheus_preprocessing.py 's output] --target_dir [prometheus_preprocessing.py 's output dir] --save_dir [final output dir]
-```
 ------------------
 - This work was supported by Institute for Information & communications Technology Promotion(IITP) grant funded by the Korea government(MSIT) (No.2021-0-00281, Development of highly integrated operator resource deployment optimization technology to maximize performance efficiency of high-load complex machine learning workloads in a hybrid cloud environment)
 
