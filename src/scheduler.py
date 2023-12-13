@@ -1,3 +1,4 @@
+import re
 import pymysql
 import argparse
 import schedule
@@ -12,7 +13,7 @@ parser.add_argument('--db_passwd', type=str, default='test123')
 parser.add_argument('--db_name', type=str, default='Prometheus')
 parser.add_argument('--start_time', type=str,default="2h")
 parser.add_argument('--end_time', type=str,default='now')
-parser.add_argument('--scrap_size', type=str,default='1h',help = "choose time unit[d:day,h:hour,m:minute,s:second]")
+parser.add_argument('--scrap_size', type=str,default='1h',help = "set scraping size. choose time unit[d:day,h:hour,m:minute,s:second]")
 parser.add_argument('--chunk_size', type=str,default='1H', help="set chunk size fot rounding timestamp. 'D' means day, 'H' means hour, 'T' means minute 's' means seconds.")
 parser.add_argument('--method', type=str,default='mean', help= "choose groupby method ex) mean, sum, median")
 parser.add_argument('--schedule_unit', type=str,default='minute', help= "choose unit of schedule period ex) day, hour, minute, second..")
@@ -40,15 +41,15 @@ def scheduler(args:parser):
     main(args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,args.start_time, args.end_time, args.scrap_size, args.chunk_size, args.method)
     print("===============================================================================\n")
     print('scheduler is running..')
-    time_unit = int(args.scrap_size)
+    time_unit = int(re.findall('\d',args.scrap_size)[0])
     if args.schedule_unit == 'day':
-        schedule.every().day.at("06:00").do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1d', args.end_time, args.scrap_size, args.chunk_size, args.method)
+        schedule.every(time_unit).day.at("06:00").do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1d', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'hour':
-        schedule.every(1).hour.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1h', args.end_time, args.scrap_size, args.chunk_size, args.method)
+        schedule.every(time_unit).hour.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1h', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'minute':
-        schedule.every(15).minutes.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'15m', args.end_time, args.scrap_size, args.chunk_size, args.method)
+        schedule.every(time_unit).minutes.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'15m', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'second':
-        schedule.every(60).seconds.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1m', args.end_time, args.scrap_size, args.chunk_size, args.method)
+        schedule.every(time_unit).seconds.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1m', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'none':
         pass
     while True:
