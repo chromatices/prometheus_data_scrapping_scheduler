@@ -25,6 +25,12 @@ nostril package from [nostril](https://github.com/casics/nostril.git)
 ```
 
 ------------------
+### How to use
+
+```
+$ python scheduler.py  --prometheus_url http://localhost:[prometheus port: int] --db_url localhost --db_port [dbport: int] --db_user [user] --db_passwd [db password] --start_time 3h --end_time now --scrap_size 3h --chunk_size 3h --method mean --schedule_unit hour
+```
+------------------
 - This work was supported by Institute for Information & communications Technology Promotion(IITP) grant funded by the Korea government(MSIT) (No.2021-0-00281, Development of highly integrated operator resource deployment optimization technology to maximize performance efficiency of high-load complex machine learning workloads in a hybrid cloud environment)
 
 <!-- >>>>>>> aa9fb28b66f0adeadda5fcc24ea04af177947340 -->
