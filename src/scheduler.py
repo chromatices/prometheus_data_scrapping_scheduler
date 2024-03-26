@@ -38,10 +38,10 @@ def main(url:str, db_url:str, db_port:int, db_user:str, db_passwd:str, db_name:s
 
 def scheduler(args:parser):
 
-    main(args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,args.start_time, args.end_time, args.scrap_size, args.chunk_size, args.method)
     print("===============================================================================\n")
     print('scheduler is running..')
-    time_unit = int(re.findall('\d',args.scrap_size)[0])
+    main(args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,args.start_time, args.end_time, args.scrap_size, args.chunk_size, args.method)
+    time_unit = int(re.match(r'^(\d+)', args.scrap_size).group(1))
     if args.schedule_unit == 'day':
         schedule.every(time_unit).day.at("06:00").do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1d', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'hour':
