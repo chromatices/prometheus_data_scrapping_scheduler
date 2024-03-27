@@ -107,7 +107,7 @@ def pod_separate(total_df:pd.DataFrame,conn:create_engine):
         
         # insert DB
         table_name = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', '_',pod)
-        tmp.to_sql(name=table_name, con=conn,if_exists='append',index=False)
+        tmp.to_sql(name=table_name, con=conn,if_exists='replace',index=False)
         print("Table " +table_name+" insert success.")
     print("===============================================================================")
     print("current table list: ")
