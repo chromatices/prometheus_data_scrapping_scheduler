@@ -20,7 +20,8 @@ parser.add_argument('--schedule_unit', type=str,default='minute', help= "choose 
 args = parser.parse_args()
 
 def main(url:str, db_url:str, db_port:int, db_user:str, db_passwd:str, db_name:str, start_time:str, end_time:str, scrap_size:str, chunk_size:str, method:str):
-    
+    print("===============================================================================\n")
+    print('scheduler is running..')    
     connection = pymysql.connect(host=db_url,port=db_port, user=db_user,password=db_passwd,charset='utf8')
     try:
         connection.cursor().execute('create database ' + db_name +';')
@@ -38,8 +39,6 @@ def main(url:str, db_url:str, db_port:int, db_user:str, db_passwd:str, db_name:s
 
 def scheduler(args:parser):
 
-    print("===============================================================================\n")
-    print('scheduler is running..')
     main(args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,args.start_time, args.end_time, args.scrap_size, args.chunk_size, args.method)
     time_unit = int(re.match(r'^(\d+)', args.scrap_size).group(1))
     if args.schedule_unit == 'day':
@@ -47,11 +46,11 @@ def scheduler(args:parser):
     elif args.schedule_unit == 'hour':
         schedule.every(time_unit).hour.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1h', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'minute':
-        schedule.every(time_unit).minutes.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'15m', args.end_time, args.scrap_size, args.chunk_size, args.method)
+        schedule.every(time_unit).minutes.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,str(time_unit*30)+'m', args.end_time, args.scrap_size, args.chunk_size, args.method)
     elif args.schedule_unit == 'second':
-        schedule.every(time_unit).seconds.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,'1m', args.end_time, args.scrap_size, args.chunk_size, args.method)
-    elif args.schedule_unit == 'none':
-        pass
+        schedule.every(time_unit).seconds.do(main,args.prometheus_url,args.db_url,args.db_port,args.db_user,args.db_passwd,args.db_name,str(time_unit*1800) + 's', args.end_time, args.scrap_size, args.chunk_size, args.method)
+    else:
+        print("Schedule unit invalid. Please check your arguments.")
     while True:
         schedule.run_pending()
 
