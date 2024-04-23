@@ -2,7 +2,9 @@ import re
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+
 from sqlalchemy import create_engine
+from pangres import upsert, DocsExampleTable
 from nostril import generate_nonsense_detector
 from prometheus_api_client.utils import parse_datetime, parse_timedelta
 from prometheus_api_client import PrometheusConnect, MetricSnapshotDataFrame, PrometheusApiClientException
@@ -89,7 +91,8 @@ def preprocessing(metric_list:list, chunk_size:str , method:str):
 def pod_separate(total_df:pd.DataFrame,conn:create_engine):
     pod_list = total_df['pod'].unique()
     print('pod separate start...')
-    for pod in pod_list:
+    table_list = conn.engine.table_names()
+    for idx, pod in enumerate(pod_list):
         tmp = total_df[total_df['pod']==pod]
         tmp = tmp.sort_values(by=['timestamp'],axis=0).reset_index(drop=True)
         tmp = tmp.drop(['pod'],axis=1)
@@ -107,8 +110,17 @@ def pod_separate(total_df:pd.DataFrame,conn:create_engine):
         
         # insert DB
         table_name = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', '_',pod)
-        tmp.to_sql(name=table_name, con=conn,if_exists='replace',index=False)
+        if table_name in table_list:
+            db_df = pd.read_sql(f"SELECT * FROM {table_name}", con=conn)
+            missing_data_db_df = tmp[~tmp['timestamp'].isin(db_df['timestamp'])]
+            print("additional "+table_name+"'s data : ")
+            print(missing_data_db_df)
+            merged_df = pd.concat([db_df,missing_data_db_df],ignore_index=True)
+            merged_df.to_sql(name=table_name, con=conn,if_exists='replace',index=False)
+        else:
+            tmp.to_sql(name=table_name, con=conn,if_exists='replace',index=False)
         print("Table " +table_name+" insert success.")
     print("===============================================================================")
     print("current table list: ")
     print(conn.engine.table_names())
+
